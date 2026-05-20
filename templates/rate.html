@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate Helper – NeedLink</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--success:#4caf7d;--warn:#f0a500;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 36px;width:100%;max-width:460px}
+.card-title{font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:28px}
+label{display:block;font-size:0.85rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em}
+.stars{display:flex;gap:10px;margin-bottom:20px}
+.star-btn{font-size:2rem;background:none;border:none;cursor:pointer;opacity:0.35;transition:opacity 0.15s,transform 0.15s;padding:0}
+.star-btn.active,.star-btn:hover{opacity:1;transform:scale(1.15)}
+select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;margin-bottom:20px;resize:none;-webkit-appearance:none;appearance:none}
+select:focus,textarea:focus{border-color:var(--accent)}
+textarea::placeholder{color:var(--muted)}
+select option{background:var(--surface2);color:var(--text)}
+.btn{display:block;width:100%;padding:12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;text-align:center;cursor:pointer;border:none;transition:all 0.2s}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{opacity:0.88}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 class="card-title">⭐ Rate Helper</h1>
+  <form method="POST">
+    <div>
+      <label>Rating (1–5)</label>
+      <div class="stars" id="starRow">
+        <button type="button" class="star-btn" data-val="1">★</button>
+        <button type="button" class="star-btn" data-val="2">★</button>
+        <button type="button" class="star-btn" data-val="3">★</button>
+        <button type="button" class="star-btn" data-val="4">★</button>
+        <button type="button" class="star-btn" data-val="5">★</button>
+      </div>
+      <select name="rating" id="ratingSelect" style="display:none">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+      </select>
+    </div>
+    <div>
+      <label>Feedback</label>
+      <textarea name="feedback" rows="4" placeholder="How did they help you?"></textarea>
+    </div>
+    <button class="btn btn-success">Submit Rating</button>
+  </form>
+</div>
+<script>
+const stars = document.querySelectorAll('.star-btn');
+const sel = document.getElementById('ratingSelect');
+stars.forEach(s => {
+  s.addEventListener('click', () => {
+    const val = +s.dataset.val;
+    sel.value = val;
+    stars.forEach(b => b.classList.toggle('active', +b.dataset.val <= val));
+  });
+});
+</script>
+</body>
+</html>

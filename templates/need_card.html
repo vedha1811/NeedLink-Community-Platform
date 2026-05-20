@@ -1,0 +1,131 @@
+<div style="
+  background: #1a1d27;
+  border: 1px solid #2e3248;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border-left: 4px solid {% if need.priority == 'SOS' %}#ff3b3b{% elif need.priority == 'Urgent' %}#f0a500{% else %}#4f8ef7{% endif %};
+  transition: border-color 0.2s, transform 0.2s;
+  font-family: 'DM Sans', sans-serif;
+">
+
+  <!-- HEADER -->
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+
+    <div>
+      <div style="font-weight:600; font-size:1rem; color:#e8eaf0; margin-bottom:4px;">
+        {{ need.category }}
+      </div>
+      <div style="color:#7c8097; font-size:0.82rem;">
+        📍 {{ need.location }}
+      </div>
+      {% if need.distance is defined %}
+      <div style="color:#4f8ef7; font-size:0.78rem; font-weight:600; margin-top:3px;">
+        {{ need.distance }} km away
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+      {% if need.priority == 'SOS' %}
+      <span style="background:#ff3b3b; color:#fff; font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:0.05em;">SOS</span>
+      {% elif need.priority == 'Urgent' %}
+      <span style="background:#f0a500; color:#111; font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:0.05em;">Urgent</span>
+      {% endif %}
+
+      {% if need.status == 'Open' %}
+      <span style="background:rgba(240,165,0,0.15); color:#f0a500; border:1px solid rgba(240,165,0,0.3); font-size:0.72rem; font-weight:600; padding:3px 10px; border-radius:999px;">Open</span>
+      {% elif need.status == 'In Progress' %}
+      <span style="background:rgba(79,142,247,0.15); color:#4f8ef7; border:1px solid rgba(79,142,247,0.3); font-size:0.72rem; font-weight:600; padding:3px 10px; border-radius:999px;">In Progress</span>
+      {% else %}
+      <span style="background:rgba(76,175,125,0.15); color:#4caf7d; border:1px solid rgba(76,175,125,0.3); font-size:0.72rem; font-weight:600; padding:3px 10px; border-radius:999px;">Completed</span>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- DESCRIPTION -->
+  <p style="color:#b0b3c6; font-size:0.875rem; margin-bottom:10px; line-height:1.5;">
+    {{ need.description }}
+  </p>
+
+  <!-- HELPER -->
+  {% if need.helper %}
+  <p style="color:#4caf7d; font-size:0.8rem; margin-bottom:10px;">
+    ✅ <strong>Helper:</strong> {{ need.helper }}
+  </p>
+  {% endif %}
+
+  <!-- TAGS ROW -->
+  <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+    {% if need.helper %}
+    <span style="background:rgba(76,175,125,0.15); color:#4caf7d; font-size:0.7rem; font-weight:600; padding:2px 9px; border-radius:999px; border:1px solid rgba(76,175,125,0.25);">Taken</span>
+    {% endif %}
+    {% if need.created_by == session['user'] %}
+    <span style="background:rgba(124,128,151,0.2); color:#7c8097; font-size:0.7rem; font-weight:600; padding:2px 9px; border-radius:999px; border:1px solid rgba(124,128,151,0.25);">Your Request</span>
+    {% endif %}
+  </div>
+
+  <!-- DIVIDER -->
+  <div style="border-top:1px solid #2e3248; margin-bottom:12px;"></div>
+
+  <!-- ACTION BUTTONS -->
+  <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end;">
+
+    {% if need.status == "Open" and not need.helper and need.created_by != session['user'] %}
+    <a href="/respond/{{ need.id }}" style="
+      background:#f0a500; color:#111; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none;
+      transition:opacity 0.2s;">
+      🤝 Respond
+    </a>
+    {% endif %}
+
+    {% if need.status == "Open" and need.created_by == session['user'] %}
+    <a href="/edit_need/{{ need.id }}" style="
+      background:rgba(79,142,247,0.15); color:#4f8ef7; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none; border:1px solid rgba(79,142,247,0.3);">
+      ✏️ Edit
+    </a>
+    <a href="/delete_need/{{ need.id }}" onclick="return confirm('Delete this need?')" style="
+      background:rgba(224,92,92,0.1); color:#e05c5c; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none; border:1px solid rgba(224,92,92,0.25);">
+      🗑 Delete
+    </a>
+    {% endif %}
+
+    {% if need.status == "In Progress" and need.created_by == session['user'] %}
+    <a href="/complete/{{ need.id }}" style="
+      background:#4caf7d; color:#fff; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none;">
+      ✅ Mark Complete
+    </a>
+    {% endif %}
+
+    {% if need.status == "In Progress" and need.helper and (need.created_by == session['user'] or need.helper == session['user']) %}
+    <a href="/chat/{{ need.id }}" style="
+      background:#232636; color:#e8eaf0; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none; border:1px solid #2e3248;">
+      💬 Chat
+    </a>
+    {% endif %}
+
+    {% if need.status == 'In Progress' and (need.created_by == session['user'] or need.helper == session['user']) %}
+    <a href="/report_user/{{ need.id }}" style="
+      background:rgba(224,92,92,0.1); color:#e05c5c; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none; border:1px solid rgba(224,92,92,0.25);">
+      🚩 Report
+    </a>
+    {% endif %}
+
+    {% if need.status == "Completed" and need.created_by == session['user'] %}
+    <a href="/rate/{{ need.id }}" style="
+      background:rgba(79,142,247,0.15); color:#4f8ef7; font-size:0.8rem; font-weight:600;
+      padding:7px 16px; border-radius:8px; text-decoration:none; border:1px solid rgba(79,142,247,0.3);">
+      ⭐ Rate Helper
+    </a>
+    {% endif %}
+
+  </div>
+
+</div>

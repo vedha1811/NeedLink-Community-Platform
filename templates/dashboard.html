@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeedLink – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--accent2:#7c5cbf;--danger:#e05c5c;--success:#4caf7d;--warn:#f0a500;--sos:#ff3b3b;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100}
+.nav-inner{max-width:960px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--accent);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:6px 11px;border-radius:8px;transition:all 0.2s}
+.nav-links a:hover{background:var(--surface2);color:var(--text)}
+.badge{background:var(--danger);color:#fff;font-size:0.68rem;border-radius:999px;padding:1px 6px;margin-left:3px}
+.container{max-width:960px;margin:0 auto;padding:0 20px}
+.page-header{padding:40px 0 28px}
+.page-header h1{font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:6px}
+.page-header p{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:36px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.stat-card .label{font-size:0.8rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.stat-card .value{font-family:'DM Serif Display',serif;font-size:2.4rem;font-weight:400}
+.stat-card.accent .value{color:var(--accent)}
+.stat-card.warn .value{color:var(--warn)}
+.stat-card.success .value{color:var(--success)}
+.stat-card.danger .value{color:var(--danger)}
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:36px}
+.action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-decoration:none;color:var(--text);transition:all 0.2s;display:flex;flex-direction:column;gap:10px}
+.action-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.action-card .icon{font-size:1.8rem}
+.action-card .title{font-weight:600;font-size:1rem}
+.action-card .desc{font-size:0.85rem;color:var(--muted)}
+.action-card.sos-card{border-color:rgba(255,59,59,0.4);background:rgba(255,59,59,0.06)}
+.action-card.sos-card:hover{border-color:var(--sos)}
+.section-title{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/dashboard" class="logo">NeedLink</a>
+    <div class="nav-links">
+      <a href="/view_needs">Needs</a>
+      <a href="/post_need">+ Post</a>
+      <a href="/pickup">Pickup</a>
+      <a href="/ngos">NGOs</a>
+      <a href="/notifications">🔔{% if notif_count > 0 %}<span class="badge">{{ notif_count }}</span>{% endif %}</a>
+      <a href="/profile">Profile</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back! Here's what's happening in your community.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card accent">
+      <div class="label">Total Needs</div>
+      <div class="value">{{ total_needs }}</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="label">In Progress</div>
+      <div class="value">{{ ongoing }}</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="label">Notifications</div>
+      <div class="value">{{ notif_count }}</div>
+    </div>
+  </div>
+
+  <div class="section-title">Quick Actions</div>
+  <div class="actions">
+    <a href="/post_need" class="action-card">
+      <div class="icon">📝</div>
+      <div class="title">Post a Need</div>
+      <div class="desc">Request help from your community</div>
+    </a>
+    <a href="/view_needs" class="action-card">
+      <div class="icon">🔍</div>
+      <div class="title">Browse Needs</div>
+      <div class="desc">Find requests to respond to</div>
+    </a>
+    <a href="/pickup" class="action-card">
+      <div class="icon">📦</div>
+      <div class="title">Pickup & Drop</div>
+      <div class="desc">Request or offer deliveries</div>
+    </a>
+    <a href="/ngos" class="action-card">
+      <div class="icon">🏢</div>
+      <div class="title">NGOs</div>
+      <div class="desc">Connect with organizations</div>
+    </a>
+    <a href="/notifications" class="action-card">
+      <div class="icon">🔔</div>
+      <div class="title">
+        Notifications
+    
+        {% if notif_count > 0 %}
+        <span style="
+            background:#e05c5c;
+            color:white;
+            font-size:0.72rem;
+            padding:2px 8px;
+            border-radius:999px;
+            margin-left:8px;
+            font-weight:600;">
+            {{ notif_count }}
+        </span>
+        {% endif %}
+      </div>
+      <div class="desc">View your alerts and updates</div>
+    </a>
+    <a href="/sos" class="action-card sos-card">
+      <div class="icon">🆘</div>
+      <div class="title">Emergency SOS</div>
+      <div class="desc">Alert nearby helpers instantly</div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

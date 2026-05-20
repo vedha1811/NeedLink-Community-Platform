@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Post Need – NeedLink</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+
+:root{
+--bg:#0f1117;
+--surface:#1a1d27;
+--surface2:#232636;
+--border:#2e3248;
+--accent:#4f8ef7;
+--success:#4caf7d;
+--text:#e8eaf0;
+--muted:#7c8097;
+--radius:12px
+}
+
+*,*::before,*::after{
+box-sizing:border-box;
+margin:0;
+padding:0
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:24px 20px
+}
+
+.card{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:var(--radius);
+padding:40px 36px;
+width:100%;
+max-width:560px
+}
+
+.card-title{
+font-family:'DM Serif Display',serif;
+font-size:1.8rem;
+margin-bottom:28px
+}
+
+label{
+display:block;
+font-size:0.85rem;
+font-weight:600;
+color:var(--muted);
+margin-bottom:6px;
+text-transform:uppercase;
+letter-spacing:0.04em
+}
+
+select,
+input[type="text"]{
+width:100%;
+background:var(--surface2);
+border:1px solid var(--border);
+border-radius:8px;
+padding:11px 14px;
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+font-size:0.95rem;
+outline:none;
+transition:border-color 0.2s;
+margin-bottom:20px;
+-webkit-appearance:none;
+appearance:none
+}
+
+select:focus,
+input[type="text"]:focus{
+border-color:var(--accent)
+}
+
+input[type="text"]::placeholder{
+color:var(--muted)
+}
+
+select option{
+background:var(--surface2);
+color:var(--text)
+}
+
+#map{
+height:280px;
+border-radius:10px;
+border:1px solid var(--border);
+margin-bottom:20px;
+overflow:hidden
+}
+
+.map-hint{
+font-size:0.8rem;
+color:var(--muted);
+margin-top:-14px;
+margin-bottom:20px
+}
+
+.btn{
+display:block;
+width:100%;
+padding:12px;
+border-radius:8px;
+font-family:'DM Sans',sans-serif;
+font-size:0.95rem;
+font-weight:600;
+text-align:center;
+cursor:pointer;
+border:none;
+transition:all 0.2s
+}
+
+.btn-success{
+background:var(--success);
+color:#fff
+}
+
+.btn-success:hover{
+opacity:0.88
+}
+
+.btn-location{
+background:var(--surface2);
+border:1px solid var(--border);
+color:var(--text);
+margin-bottom:20px
+}
+
+.btn-location:hover{
+border-color:var(--accent)
+}
+
+.error-box{
+background:rgba(224,92,92,0.1);
+border:1px solid rgba(224,92,92,0.3);
+color:#e05c5c;
+padding:12px;
+border-radius:8px;
+margin-bottom:18px;
+font-size:0.9rem
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1 class="card-title">📝 Post a Need</h1>
+
+{% if error %}
+<div class="error-box">
+{{ error }}
+</div>
+{% endif %}
+
+<form method="POST">
+
+<div>
+<label>Category</label>
+
+<select name="category">
+
+<option>Medical</option>
+<option>Study</option>
+<option>Emergency</option>
+<option>Help</option>
+
+</select>
+</div>
+
+<div>
+<label>Priority</label>
+
+<select name="priority">
+
+<option value="Normal">Normal</option>
+<option value="Urgent">Urgent</option>
+
+</select>
+</div>
+
+<div>
+<label>Description</label>
+
+<input type="text"
+       name="description"
+       placeholder="Describe what you need..."
+       required>
+</div>
+
+<div>
+<label>Location Name</label>
+
+<input type="text"
+       name="location"
+       id="location"
+       placeholder="e.g. Koramangala, Bengaluru">
+
+<input type="hidden" name="lat" id="lat">
+<input type="hidden" name="lng" id="lng">
+
+<button type="button"
+        class="btn btn-location"
+        onclick="getCurrentLocation()">
+
+📍 Use My Current Location
+
+</button>
+</div>
+
+<div>
+
+<label>Pin Location on Map</label>
+
+<div id="map"></div>
+
+<p class="map-hint">
+Click on the map to manually set your location
+</p>
+
+</div>
+
+<button class="btn btn-success">
+Submit Need
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+var map = L.map('map').setView([12.9716, 77.5946], 13);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+attribution: '© OpenStreetMap'
+}
+).addTo(map);
+
+var marker;
+
+// -------------------------------
+// AUTO LOCATION
+// -------------------------------
+navigator.geolocation.getCurrentPosition(function(pos) {
+
+    map.setView(
+        [pos.coords.latitude, pos.coords.longitude],
+        13
+    );
+
+});
+
+// -------------------------------
+// MAP CLICK
+// -------------------------------
+map.on('click', function(e) {
+
+    if (marker) {
+
+        marker.setLatLng(e.latlng);
+
+    } else {
+
+        marker = L.marker(e.latlng).addTo(map);
+
+    }
+
+    document.getElementById('lat').value = e.latlng.lat;
+
+    document.getElementById('lng').value = e.latlng.lng;
+
+    document.getElementById('location').value =
+        `Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`;
+
+});
+
+// -------------------------------
+// CURRENT LOCATION BUTTON
+// -------------------------------
+function getCurrentLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert("Geolocation is not supported");
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+
+            document.getElementById('location').value =
+                `Lat: ${lat}, Lng: ${lng}`;
+
+            map.setView([lat, lng], 15);
+
+            if (marker) {
+
+                marker.setLatLng([lat, lng]);
+
+            } else {
+
+                marker = L.marker([lat, lng]).addTo(map);
+
+            }
+
+        },
+
+        function(error) {
+
+            alert("Unable to fetch current location");
+
+        }
+
+    );
+}
+
+</script>
+
+</body>
+</html>

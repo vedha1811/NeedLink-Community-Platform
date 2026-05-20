@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile – NeedLink</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--danger:#e05c5c;--success:#4caf7d;--warn:#f0a500;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 36px;width:100%;max-width:480px}
+.avatar-wrap{text-align:center;margin-bottom:20px}
+.avatar-wrap img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+.card-title{font-family:'DM Serif Display',serif;font-size:1.8rem;text-align:center;margin-bottom:20px}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.field{margin-bottom:16px}
+.field-label{font-size:0.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.field-value{font-size:0.97rem;color:var(--text)}
+.status-pending{color:var(--warn);font-weight:600}
+.status-verified{color:var(--success);font-weight:600}
+.status-none{color:var(--muted)}
+.btn{display:block;width:100%;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:600;text-align:center;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:all 0.2s;margin-bottom:10px}
+.btn-warn{background:transparent;color:var(--warn);border-color:var(--warn)}
+.btn-warn:hover{background:rgba(240,165,0,0.1)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{opacity:0.88}
+.btn-danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+.btn-danger:hover{background:rgba(224,92,92,0.1)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="avatar-wrap">
+    {% if user.photo %}
+    <img src="/{{ user.photo }}" alt="Profile photo">
+    {% else %}
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Default avatar">
+    {% endif %}
+  </div>
+  <h2 class="card-title">My Profile</h2>
+  <hr class="divider">
+
+  <div class="field">
+    <div class="field-label">Name</div>
+    <div class="field-value">{{ user.name }}</div>
+  </div>
+  <div class="field">
+    <div class="field-label">Email</div>
+    <div class="field-value">{{ user.email }}</div>
+  </div>
+  <div class="field">
+    <div class="field-label">Phone</div>
+    <div class="field-value">{{ user.phone }}</div>
+  </div>
+  <div class="field">
+    <div class="field-label">Location</div>
+    <div class="field-value">{{ user.location if user.location else 'Not Added' }}</div>
+  </div>
+  <div class="field">
+    <div class="field-label">Verification Status</div>
+    <div class="field-value">
+      {% if user.verification_status == 'Pending' %}
+        <span class="status-pending">⏳ Pending Verification</span>
+      {% elif user.verification_status == 'Verified' %}
+        <span class="status-verified">✅ Verified User</span>
+      {% else %}
+        <span class="status-none">Not Submitted</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="field">
+    <div class="field-label">Average Rating</div>
+    <div class="field-value">
+      {% if user.avg_rating %}
+        ⭐ {{ user.avg_rating }} / 5 ({{ user.total_ratings }} ratings)
+      {% else %}
+        No ratings yet
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="field">
+    <div class="field-label">Needs Posted</div>
+    <div class="field-value">{{ user.needs_posted }}</div>
+  </div>
+  
+  <div class="field">
+    <div class="field-label">People Helped</div>
+    <div class="field-value">{{ user.needs_helped }}</div>
+  </div>
+  <div class="field">
+    <div class="field-label">NGO Status</div>
+    <div class="field-value">
+  
+      {% if user.is_ngo and user.ngo_verified %}
+        ✅ Verified NGO
+  
+      {% elif user.is_volunteer %}
+        🤝 NGO Volunteer
+  
+      {% else %}
+        Regular Community User
+  
+      {% endif %}
+  
+    </div>
+  </div>
+  <a href="/edit_profile" class="btn btn-warn">Edit Profile</a>
+  <a href="/dashboard" class="btn btn-primary">Back to Dashboard</a>
+  <a href="/logout" class="btn btn-danger">Logout</a>
+  
+</div>
+</body>
+</html>

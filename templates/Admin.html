@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel – NeedLink</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--accent2:#7c5cbf;--danger:#e05c5c;--success:#4caf7d;--warn:#f0a500;--sos:#ff3b3b;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--accent);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:6px 11px;border-radius:8px;transition:all 0.2s}
+.nav-links a:hover{background:var(--surface2);color:var(--text)}
+.container{max-width:1100px;margin:0 auto;padding:0 20px 40px}
+.page-header{padding:36px 0 24px;display:flex;align-items:center;justify-content:space-between}
+.page-header h1{font-family:'DM Serif Display',serif;font-size:2rem}
+.back-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);text-decoration:none;padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:500;transition:all 0.2s}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Stats grid */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px}
+.stat-card .label{font-size:0.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.stat-card .value{font-family:'DM Serif Display',serif;font-size:2.2rem}
+.stat-card.c-accent .value{color:var(--accent)}
+.stat-card.c-warn .value{color:var(--warn)}
+.stat-card.c-success .value{color:var(--success)}
+.stat-card.c-danger .value{color:var(--danger)}
+.stat-card.c-sos .value{color:var(--sos)}
+.stat-card.c-purple .value{color:var(--accent2)}
+
+/* Analytics row */
+.analytics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:28px}
+.analytics-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.analytics-card h6{font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.analytics-card .big-num{font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:10px}
+.progress-bar-bg{background:var(--surface2);border-radius:999px;height:6px;overflow:hidden}
+.progress-bar-fill{height:6px;border-radius:999px;background:var(--success);transition:width 0.5s ease}
+
+/* Need status overview */
+.status-overview{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:28px}
+.status-overview h5{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:18px}
+.status-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center}
+.status-item .num{font-family:'DM Serif Display',serif;font-size:2rem}
+.status-item .lbl{color:var(--muted);font-size:0.82rem;margin-top:2px}
+
+/* Top helpers */
+.helpers-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:28px}
+.helpers-card h5{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:16px}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab-btn{background:none;border:none;color:var(--muted);padding:10px 18px;font-size:0.88rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.badge-count{background:var(--danger);color:#fff;font-size:0.65rem;border-radius:999px;padding:1px 6px}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* Tables */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--surface2)}
+th{padding:13px 16px;text-align:left;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted)}
+td{padding:13px 16px;font-size:0.875rem;border-top:1px solid var(--border);vertical-align:middle}
+tr.blocked-row td{background:rgba(224,92,92,0.05)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* Badges */
+.badge{display:inline-block;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:0.03em}
+.badge-danger{background:rgba(224,92,92,0.15);color:var(--danger);border:1px solid rgba(224,92,92,0.25)}
+.badge-success{background:rgba(76,175,125,0.15);color:var(--success);border:1px solid rgba(76,175,125,0.25)}
+.badge-warn{background:rgba(240,165,0,0.15);color:var(--warn);border:1px solid rgba(240,165,0,0.25)}
+.badge-info{background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.25)}
+.badge-muted{background:rgba(124,128,151,0.15);color:var(--muted);border:1px solid rgba(124,128,151,0.2)}
+.badge-sos{background:rgba(255,59,59,0.15);color:var(--sos);border:1px solid rgba(255,59,59,0.25)}
+
+/* Buttons */
+.btn{display:inline-block;font-size:0.78rem;font-weight:600;padding:6px 13px;border-radius:7px;text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s}
+.btn:hover{opacity:0.85}
+.btn-danger{background:rgba(224,92,92,0.15);color:var(--danger);border:1px solid rgba(224,92,92,0.3)}
+.btn-success{background:rgba(76,175,125,0.15);color:var(--success);border:1px solid rgba(76,175,125,0.3)}
+.btn-warn{background:rgba(240,165,0,0.15);color:var(--warn);border:1px solid rgba(240,165,0,0.3)}
+.btn-muted{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.empty-row td{text-align:center;color:var(--muted);padding:28px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/dashboard" class="logo">NeedLink</a>
+    <div class="nav-links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/admin" style="color:var(--accent)">Admin</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>🛡️ Admin Panel</h1>
+    <a href="/dashboard" class="back-btn">← Dashboard</a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-card c-accent">
+      <div class="label">Total Users</div>
+      <div class="value">{{ users|length }}</div>
+    </div>
+    <div class="stat-card c-success">
+      <div class="label">Total Needs</div>
+      <div class="value">{{ needs|length }}</div>
+    </div>
+    <div class="stat-card c-warn">
+      <div class="label">Pending NGOs</div>
+      <div class="value">{{ ngo_requests|length }}</div>
+    </div>
+    <div class="stat-card c-danger">
+      <div class="label">Reports</div>
+      <div class="value">{{ reports|length }}</div>
+    </div>
+    <div class="stat-card c-sos">
+      <div class="label">SOS Requests</div>
+      <div class="value">{{ sos_count }}</div>
+    </div>
+    <div class="stat-card c-purple">
+      <div class="label">Urgent Requests</div>
+      <div class="value">{{ urgent_count }}</div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="analytics">
+    <div class="analytics-card">
+      <h6>Completion Rate</h6>
+      <div class="big-num" style="color:var(--success)">{{ completion_rate }}%</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width:{{ completion_rate }}%"></div>
+      </div>
+    </div>
+    <div class="analytics-card">
+      <h6>Need Status Overview</h6>
+      <div class="status-row">
+        <div class="status-item">
+          <div class="num" style="color:var(--warn)">{{ open_needs_count }}</div>
+          <div class="lbl">Open</div>
+        </div>
+        <div class="status-item">
+          <div class="num" style="color:var(--accent)">{{ ongoing_needs }}</div>
+          <div class="lbl">In Progress</div>
+        </div>
+        <div class="status-item">
+          <div class="num" style="color:var(--success)">{{ completed_needs }}</div>
+          <div class="lbl">Completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP HELPERS -->
+  <div class="helpers-card">
+    <h5>🏆 Top Helpers</h5>
+    <table>
+      <thead>
+        <tr><th>User</th><th>Completed Tasks</th></tr>
+      </thead>
+      <tbody>
+        {% for helper, count in top_helpers %}
+        <tr>
+          <td>{{ helper }}</td>
+          <td><span class="badge badge-success">{{ count }}</span></td>
+        </tr>
+        {% else %}
+        <tr class="empty-row"><td colspan="2">No helper data yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('users', this)">👥 Users</button>
+    <button class="tab-btn" onclick="switchTab('needs', this)">📋 Needs</button>
+    <button class="tab-btn" onclick="switchTab('ngo', this)">
+      🏢 NGO Requests
+      {% if ngo_requests %}<span class="badge-count">{{ ngo_requests|length }}</span>{% endif %}
+    </button>
+    <button class="tab-btn" onclick="switchTab('reports', this)">🚩 Reports</button>
+  </div>
+
+  <!-- USERS TAB -->
+  <div class="tab-pane active" id="tab-users">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Role</th><th>Rating</th><th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr {% if u.is_blocked %}class="blocked-row"{% endif %}>
+            <td style="font-weight:500">{{ u.name }}</td>
+            <td style="color:var(--muted)">{{ u.email }}</td>
+            <td>
+              <span class="badge {% if u.get('role') == 'admin' %}badge-info{% elif u.get('is_ngo') %}badge-success{% else %}badge-muted{% endif %}">
+                {{ u.get('role','user') }}{% if u.get('is_ngo') %} · NGO{% endif %}
+              </span>
+            </td>
+            <td>
+              {% if u.avg_rating %}
+              <span style="color:var(--warn)">⭐ {{ u.avg_rating }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              {% if u.is_blocked %}
+              <span class="badge badge-danger">Blocked</span>
+              {% else %}
+              <span class="badge badge-success">Active</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if u.is_blocked %}
+              <a href="/admin/unblock/{{ u.id }}" class="btn btn-success" onclick="return confirm('Unblock this user?')">Unblock</a>
+              {% else %}
+              <a href="/admin/block/{{ u.id }}" class="btn btn-danger" onclick="return confirm('Block this user?')">Block</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr class="empty-row"><td colspan="6">No users found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NEEDS TAB -->
+  <div class="tab-pane" id="tab-needs">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th><th>Description</th><th>Created By</th><th>Priority</th><th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for n in needs %}
+          <tr>
+            <td style="font-weight:500">{{ n.category }}</td>
+            <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ n.description[:60] }}…</td>
+            <td>{{ n.created_by }}</td>
+            <td>
+              {% if n.priority == 'SOS' %}
+              <span class="badge badge-sos">SOS</span>
+              {% elif n.priority == 'Urgent' %}
+              <span class="badge badge-warn">Urgent</span>
+              {% else %}
+              <span class="badge badge-muted">Normal</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if n.status == 'Open' %}
+              <span class="badge badge-warn">Open</span>
+              {% elif n.status == 'In Progress' %}
+              <span class="badge badge-info">In Progress</span>
+              {% else %}
+              <span class="badge badge-success">Completed</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="/admin/delete_need/{{ n.id }}" class="btn btn-danger" onclick="return confirm('Delete this need?')">Delete</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr class="empty-row"><td colspan="6">No needs found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NGO TAB -->
+  <div class="tab-pane" id="tab-ngo">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>NGO Name</th><th>Email</th><th>Description</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {% for n in ngo_requests %}
+          <tr>
+            <td style="font-weight:600">{{ n.ngo_name }}</td>
+            <td style="color:var(--muted)">{{ n.email }}</td>
+            <td style="color:var(--muted);font-size:0.82rem;">{{ n.description[:60] if n.description else '—' }}…</td>
+            <td style="display:flex;gap:8px;">
+              <a href="/admin/approve_ngo/{{ n.id }}" class="btn btn-success" onclick="return confirm('Approve this NGO?')">✓ Approve</a>
+              <a href="/admin/reject_ngo/{{ n.id }}" class="btn btn-danger" onclick="return confirm('Reject this NGO?')">✗ Reject</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr class="empty-row"><td colspan="4">No pending NGO requests</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REPORTS TAB -->
+  <div class="tab-pane" id="tab-reports">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Reported User</th><th>Reported By</th><th>Reason</th><th>Details</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {% for r in reports %}
+          <tr>
+            <td style="font-weight:500;color:var(--danger)">{{ r.reported_user }}</td>
+            <td style="color:var(--muted)">{{ r.reported_by }}</td>
+            <td>{{ r.reason }}</td>
+            <td style="color:var(--muted);font-size:0.82rem;">{{ r.details[:50] if r.details else '—' }}</td>
+            <td>
+              {% if r.status == 'Pending' %}
+              <span class="badge badge-warn">Pending</span>
+              {% elif r.status == 'Resolved' %}
+              <span class="badge badge-success">Resolved</span>
+              {% else %}
+              <span class="badge badge-muted">{{ r.status }}</span>
+              {% endif %}
+            </td>
+            <td style="display:flex;gap:6px;">
+              {% if r.status == 'Pending' %}
+              <a href="/admin/resolve_report/{{ r.id }}" class="btn btn-success" onclick="return confirm('Mark resolved?')">Resolve</a>
+              <a href="/admin/block/{{ r.reported_user_id }}" class="btn btn-danger" onclick="return confirm('Block this user?')">Block User</a>
+              {% else %}
+              <span style="color:var(--muted);font-size:0.8rem;">Done</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr class="empty-row"><td colspan="6">No reports found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

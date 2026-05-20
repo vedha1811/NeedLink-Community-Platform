@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeedLink – Forgot Password</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--warn:#f0a500;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.logo{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--accent);margin-bottom:8px;text-align:center}
+.tagline{color:var(--muted);font-size:0.9rem;margin-bottom:32px;text-align:center}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px;width:100%;max-width:420px}
+.card h2{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:8px;text-align:center}
+.subtitle{color:var(--muted);font-size:0.88rem;text-align:center;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
+input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s}
+input:focus{border-color:var(--accent)}
+input::placeholder{color:var(--muted)}
+.btn{width:100%;background:var(--warn);color:#0f1117;border:none;border-radius:8px;padding:12px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;margin-top:8px}
+.btn:hover{opacity:0.88}
+.footer-text{text-align:center;margin-top:20px;font-size:0.88rem;color:var(--muted)}
+.footer-text a{color:var(--accent);text-decoration:none}
+.footer-text a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="logo">NeedLink</div>
+<p class="tagline">Community help, simplified.</p>
+
+<div class="card">
+  <h2>Forgot Password</h2>
+  <p class="subtitle">Enter your email and we'll send you an OTP to reset your password.</p>
+
+  <form method="POST">
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" name="email" placeholder="you@example.com" required>
+    </div>
+    <button class="btn" type="submit">Send OTP</button>
+  </form>
+</div>
+
+<p class="footer-text">
+  Remember it? <a href="/login">Back to Login</a>
+</p>
+</body>
+</html>

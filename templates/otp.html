@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTP Verification – NeedLink</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--danger:#e05c5c;--success:#4caf7d;--warn:#f0a500;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 36px;width:100%;max-width:400px}
+.card-title{font-family:'DM Serif Display',serif;font-size:1.8rem;text-align:center;margin-bottom:8px}
+.card-sub{color:var(--muted);font-size:0.9rem;text-align:center;margin-bottom:20px}
+.timer{text-align:center;font-size:0.9rem;margin-bottom:20px}
+.timer span{color:var(--danger);font-weight:600}
+.alert{background:rgba(224,92,92,0.1);border:1px solid rgba(224,92,92,0.3);color:var(--danger);border-radius:8px;padding:10px 14px;font-size:0.88rem;text-align:center;margin-bottom:18px}
+label{display:block;font-size:0.85rem;font-weight:500;color:var(--muted);margin-bottom:6px}
+input[type="text"]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1.1rem;text-align:center;letter-spacing:0.2em;outline:none;transition:border-color 0.2s;margin-bottom:16px}
+input[type="text"]:focus{border-color:var(--accent)}
+input[type="text"]::placeholder{letter-spacing:normal;font-size:0.95rem}
+.btn{display:block;width:100%;padding:12px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;text-align:center;text-decoration:none;cursor:pointer;border:none;transition:all 0.2s;margin-bottom:10px}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{opacity:0.88}
+.btn-warn{background:transparent;color:var(--warn);border:1px solid var(--warn)}
+.btn-warn:hover:not([disabled]){background:rgba(240,165,0,0.1)}
+.btn-warn[disabled]{opacity:0.4;cursor:not-allowed;pointer-events:none}
+</style>
+<script>
+let timeLeft = 120;
+function startTimer() {
+    let timer = setInterval(function() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").innerHTML = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        timeLeft--;
+        if (timeLeft < 0) { clearInterval(timer); document.getElementById("timer").innerHTML = "Expired"; }
+    }, 1000);
+}
+function enableResend() {
+    setTimeout(function() { document.getElementById("resendBtn").disabled = false; }, 30000);
+}
+window.onload = function() { startTimer(); enableResend(); };
+</script>
+</head>
+<body>
+<div class="card">
+  <h2 class="card-title">Verify OTP</h2>
+  <p class="card-sub">Enter the OTP sent to your email</p>
+  <div class="timer">Time remaining: <span id="timer">2:00</span></div>
+
+  {% if error %}
+  <div class="alert">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST">
+    <label for="otp">One-Time Password</label>
+    <input type="text" name="otp" id="otp" placeholder="Enter OTP" required>
+    <button class="btn btn-success">Verify OTP</button>
+  </form>
+
+  <a href="/resend_otp" id="resendBtn" class="btn btn-warn" disabled>Resend OTP (after 30 sec)</a>
+</div>
+</body>
+</html>

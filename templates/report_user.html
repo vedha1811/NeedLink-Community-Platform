@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeedLink – Report User</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--danger:#e05c5c;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;width:100%;max-width:560px}
+.logo{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--accent);display:block;margin-bottom:8px;text-decoration:none;text-align:center}
+h3{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--danger);margin-bottom:6px}
+.reporting{color:var(--muted);font-size:0.92rem;margin-bottom:28px}
+.reporting strong{color:var(--text)}
+.form-group{margin-bottom:20px}
+label{display:block;font-size:0.82rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;appearance:none;resize:vertical}
+select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--surface2)}
+.btn-danger{width:100%;background:var(--danger);color:#fff;border:none;border-radius:8px;padding:13px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;margin-top:4px;transition:opacity 0.2s}
+.btn-danger:hover{opacity:0.88}
+.btn-back{display:block;width:100%;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;margin-top:12px;text-align:center;text-decoration:none;transition:all 0.2s}
+.btn-back:hover{border-color:var(--accent);color:var(--text)}
+</style>
+</head>
+<body>
+<div class="card">
+  <a href="/dashboard" class="logo">NeedLink</a>
+  <h3>Report User</h3>
+  <p class="reporting">You are reporting: <strong>{{ reported_user }}</strong></p>
+  <form method="POST">
+    <div class="form-group">
+      <label>Reason</label>
+      <select name="reason" required>
+        <option value="">Select Reason</option>
+        <option>Spam</option>
+        <option>Fake Request</option>
+        <option>Harassment</option>
+        <option>Abusive Behaviour</option>
+        <option>Fraud</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Additional Details</label>
+      <textarea name="details" rows="4" placeholder="Describe the issue..."></textarea>
+    </div>
+    <button class="btn-danger" type="submit">Submit Report</button>
+  </form>
+  <a href="/view_needs" class="btn-back">Cancel</a>
+</div>
+</body>
+</html>

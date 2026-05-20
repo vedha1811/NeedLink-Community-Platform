@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeedLink – Register NGO</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#232636;--border:#2e3248;--accent:#4f8ef7;--success:#4caf7d;--danger:#e05c5c;--text:#e8eaf0;--muted:#7c8097;--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px}
+.logo{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--accent);margin-bottom:8px;text-align:center}
+.tagline{color:var(--muted);font-size:0.9rem;margin-bottom:32px;text-align:center}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px;width:100%;max-width:520px}
+.card-header{text-align:center;margin-bottom:28px}
+.card-header h2{font-family:'DM Serif Display',serif;font-size:1.7rem;margin-bottom:8px}
+.card-header p{color:var(--muted);font-size:0.88rem;line-height:1.6}
+.card-header strong{color:var(--success)}
+.alert-danger{background:rgba(224,92,92,0.1);border:1px solid rgba(224,92,92,0.3);color:#f08080;border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:0.88rem}
+.alert-success{background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.3);color:var(--success);border-radius:8px;padding:20px;margin-bottom:18px;text-align:center}
+.alert-success h5{font-size:1.1rem;margin-bottom:12px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
+input,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;resize:vertical}
+input:focus,textarea:focus{border-color:var(--accent)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+.btn{display:inline-block;background:var(--success);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;text-decoration:none;text-align:center}
+.btn:hover{opacity:0.85}
+.btn-primary{background:var(--accent)}
+.btn-full{width:100%}
+.footer-text{text-align:center;margin-top:20px;font-size:0.88rem;color:var(--muted)}
+.footer-text a{color:var(--accent);text-decoration:none}
+.footer-text a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="logo">NeedLink</div>
+<p class="tagline">Community help, simplified.</p>
+
+<div class="card">
+  <div class="card-header">
+    <h2>🏢 Register as NGO</h2>
+    <p>NGOs are verified organizations that provide large-scale community help. After registration, an admin will review and approve your account. You'll receive a <strong>✓ Verified NGO</strong> badge visible to all users.</p>
+  </div>
+
+  {% if error %}
+  <div class="alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if success %}
+  <div class="alert-success">
+    <h5>✅ {{ success }}</h5>
+    <a href="/login" class="btn btn-primary">Go to Login</a>
+  </div>
+  {% else %}
+
+  <form method="POST">
+    <div class="form-group">
+      <label>Your Full Name</label>
+      <input type="text" name="name" placeholder="Person in charge" required>
+    </div>
+    <div class="form-group">
+      <label>NGO / Organization Name</label>
+      <input type="text" name="ngo_name" placeholder="e.g. Red Cross, Helping Hands" required>
+    </div>
+    <div class="form-group">
+      <label>What does your NGO do?</label>
+      <textarea name="ngo_desc" rows="3" placeholder="Brief description of your organization's work…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" name="email" placeholder="official@ngo.org" required>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Min 6 characters" required minlength="6">
+    </div>
+    <div class="form-group">
+      <label>Contact Phone</label>
+      <input type="text" name="phone" placeholder="+91 9876543210" required>
+    </div>
+    <button type="submit" class="btn btn-full">Submit NGO Registration</button>
+  </form>
+
+  {% endif %}
+</div>
+
+<p class="footer-text">
+  Regular user? <a href="/register">Register here</a> &nbsp;·&nbsp; <a href="/login">Login</a>
+</p>
+</body>
+</html>
